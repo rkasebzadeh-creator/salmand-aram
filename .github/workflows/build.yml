@@ -14,15 +14,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Build APK with Gradle
+      - name: Fix Line Endings and Build APK
         run: |
-          if [ -f "build.gradle.kts" ] || [ -f "build.gradle" ]; then
-            gradle assembleDebug
-          elif [ -d "AramJanApp" ]; then
+          if [ -d "AramJanApp" ]; then
             cd AramJanApp
+          fi
+          if [ -f "gradlew" ]; then
+            sed -i 's/\r$//' gradlew
+            chmod +x gradlew
+            ./gradlew assembleDebug
+          else
             gradle assembleDebug
           fi
 
